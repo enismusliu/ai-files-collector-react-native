@@ -3,8 +3,17 @@ import { images } from "../constants";
 import CustomButton from "@/components/atoms/CustomButton";
 import { StatusBar } from "expo-status-bar";
 import { Redirect, router } from "expo-router";
+import { useLoadingStore } from "@/stores/Loading.store";
+import { useUserStore } from "@/stores/User.store";
 
 const Welcome = () => {
+  /**
+   * @global_states
+   */
+  const isLoading = useLoadingStore((state) => state.loading);
+  const user = useUserStore((state) => state.user);
+
+  if (!isLoading && user) return <Redirect href="/home" />;
   return (
     <SafeAreaView className="h-full bg-primary">
       <ScrollView contentContainerStyle={{ height: "100%" }}>

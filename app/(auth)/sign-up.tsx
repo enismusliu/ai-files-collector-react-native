@@ -8,8 +8,17 @@ import FormField from "@/components/atoms/FormField";
 import CustomButton from "@/components/atoms/CustomButton";
 import { createUser } from "@/lib/appwrite";
 import { handleError } from "@/utils/handleError";
+import { useUserStore } from "@/stores/User.store";
 
 const SignUp = () => {
+  /**
+   * @global_states
+   */
+  const setUser = useUserStore((state) => state.setUser);
+
+  /**
+   * @states
+   */
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [form, setForm] = useState<SignUpPayload>({
     username: "",
@@ -17,6 +26,9 @@ const SignUp = () => {
     password: "",
   });
 
+  /**
+   * @handlers
+   */
   const submit = async () => {
     if (form.username === "" || form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill in all fields");
@@ -29,7 +41,7 @@ const SignUp = () => {
         password: form.password,
         username: form.username,
       });
-
+      setUser(result);
       router.replace("/home");
     } catch (error) {
       handleError(error);

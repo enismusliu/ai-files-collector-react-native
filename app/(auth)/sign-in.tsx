@@ -6,16 +6,28 @@ import FormField from "@/components/atoms/FormField";
 import { SignInPayload } from "@/interfaces/SignInPayload.interface";
 import CustomButton from "@/components/atoms/CustomButton";
 import { Link, router } from "expo-router";
-import { signIn } from "@/lib/appwrite";
+import { getCurrentUser, signIn } from "@/lib/appwrite";
 import { handleError } from "@/utils/handleError";
+import { useUserStore } from "@/stores/User.store";
 
 const SignIn = () => {
+  /**
+   * @global_states
+   */
+  const setUser = useUserStore((state) => state.setUser);
+
+  /**
+   * @states
+   */
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [form, setForm] = useState<SignInPayload>({
     email: "",
     password: "",
   });
 
+  /**
+   * @handlers
+   */
   const submit = async () => {
     if (form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill in all fields");
@@ -25,7 +37,8 @@ const SignIn = () => {
 
     try {
       await signIn({ email: form.email, password: form.password });
-
+      const result = await getCurrentUser();
+      setUser(result);
       Alert.alert("Success", "User signed in successfully");
       router.replace("/home");
     } catch (error) {
